@@ -150,7 +150,7 @@ function App() {
       </main>
 
       <footer className="App-footer">
-        <p>Made with ❤️ for Outline users | No data is sent to any server</p>
+        <p>Built by <strong>tintn</strong> — powered by <a href="https://vinahost.vn" target="_blank">[Vinahost]</a></p>
       </footer>
     </div>
   );
