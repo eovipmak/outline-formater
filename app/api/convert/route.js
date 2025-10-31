@@ -21,12 +21,11 @@ export async function POST(request) {
       );
     }
 
-    // Convert File to Blob for processing
+    // Convert File to ArrayBuffer for processing
     const arrayBuffer = await file.arrayBuffer();
-    const blob = new Blob([arrayBuffer]);
 
     // Process ZIP file using the utility function
-    const result = await processZip(blob);
+    const result = await processZip(arrayBuffer);
 
     return NextResponse.json({
       markdown: result.finalMarkdown,
