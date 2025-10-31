@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { processZip } from './zipUtils';
-import './App.css';
+'use client'
 
-function App() {
+import { useState } from 'react';
+
+export default function Home() {
   const [finalMarkdown, setFinalMarkdown] = useState('');
   const [originalFilename, setOriginalFilename] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,10 +25,23 @@ function App() {
         throw new Error('Please upload a .zip file');
       }
 
-      // Process ZIP file
-      const result = await processZip(file);
-      setFinalMarkdown(result.finalMarkdown);
-      setOriginalFilename(result.originalMarkdownName);
+      // Create FormData and upload to API
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/convert', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to process ZIP file');
+      }
+
+      const result = await response.json();
+      setFinalMarkdown(result.markdown);
+      setOriginalFilename(result.filename);
     } catch (err) {
       setError(err.message || 'An error occurred while processing the file');
       console.error('Error processing ZIP:', err);
@@ -40,23 +53,43 @@ function App() {
   };
 
   // Xử lý download file markdown
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!finalMarkdown) return;
 
-    // Tạo Blob từ markdown content
-    const blob = new Blob([finalMarkdown], { type: 'text/markdown;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
+    try {
+      const response = await fetch('/api/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          markdown: finalMarkdown,
+          filename: originalFilename,
+        }),
+      });
 
-    // Tạo temporary anchor để trigger download
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = originalFilename || 'output.md';
-    document.body.appendChild(a);
-    a.click();
+      if (!response.ok) {
+        throw new Error('Failed to download file');
+      }
 
-    // Cleanup
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      // Create blob and trigger download
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      // Tạo temporary anchor để trigger download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = originalFilename || 'output.md';
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err.message || 'An error occurred while downloading the file');
+      console.error('Error downloading file:', err);
+    }
   };
 
   // Xử lý khi user edit textarea
@@ -157,5 +190,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

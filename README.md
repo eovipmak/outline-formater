@@ -7,11 +7,12 @@
 
 ## ✨ Features
 
-🔒 **100% Private** - Everything runs in your browser, no server uploads  
+🔒 **100% Private** - Processing happens on your server, files never leave your infrastructure  
 ⚡ **Fast & Simple** - Upload ZIP → Get Markdown with embedded images  
 ✏️ **Editable** - Review and modify output before downloading  
 🖼️ **Multi-Format** - Supports PNG, JPG, GIF, SVG, WebP, BMP, ICO  
-📏 **Dimension Support** - Preserves image dimensions from Outline exports (e.g., `" =856x502"`)
+📏 **Dimension Support** - Preserves image dimensions from Outline exports (e.g., `" =856x502"`)  
+🚀 **Server-Side Processing** - Powered by Next.js API Routes for reliable ZIP handling
 
 ## 🚀 Quick Start
 
@@ -20,10 +21,13 @@
 npm install
 
 # Development mode
-npm start
+npm run dev
 
 # Production build
 npm run build
+
+# Start production server
+npm start
 ```
 
 Then open [http://localhost:3000](http://localhost:3000)
@@ -49,13 +53,14 @@ your-document.zip
 
 ## 🛠️ How It Works
 
-1. Extracts ZIP and locates `.md` file
-2. Collects all images from `attachments/`
-3. Converts images to base64 data URIs
-4. Replaces image references in Markdown
-5. Outputs single self-contained file
+1. Upload ZIP via Next.js API Route (`/api/convert`)
+2. Extracts ZIP and locates `.md` file on server
+3. Collects all images from `attachments/`
+4. Converts images to base64 data URIs
+5. Returns processed markdown to client
+6. Download via `/api/download` endpoint
 
-**Tech Stack:** React • JSZip • Create React App
+**Tech Stack:** Next.js 14 • React 18 • JSZip • App Router
 
 ## ⚠️ Error Handling
 
@@ -65,10 +70,34 @@ your-document.zip
 - ❌ Missing referenced images
 - ⚠️ Large images (>5MB) warning
 
+## 🔌 API Endpoints
+
+### POST /api/convert
+Upload ZIP file and receive processed markdown.
+
+**Request:**
+- Content-Type: multipart/form-data
+- Body: file (ZIP)
+
+**Response:**
+- Content-Type: application/json
+- Body: `{ markdown: string, filename: string }`
+
+### POST /api/download
+Download processed markdown file.
+
+**Request:**
+- Content-Type: application/json
+- Body: `{ markdown: string, filename: string }`
+
+**Response:**
+- Content-Type: text/markdown
+- Headers: Content-Disposition attachment
+
 ## 📝 Notes
 
 - Base64 encoding increases file size by ~33%
-- All processing happens client-side
+- Processing happens server-side for better reliability
 - Large files may take longer to process
 
 ## � Image Dimension Handling
@@ -98,6 +127,19 @@ Are converted to:
 
 MIT License - see [LICENSE](LICENSE) file
 
+## 🚀 Deployment
+
+Deploy to Vercel with zero configuration:
+
+```bash
+npm run build
+vercel --prod
+```
+
+Or use the Vercel button:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/eovipmak/outline-formater)
+
 ---
 
-**v2.0** | Made with ❤️ | No data leaves your browser
+**v3.0** | Made with ❤️ | Powered by Next.js
