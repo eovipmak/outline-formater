@@ -46,9 +46,12 @@ export default function Home() {
       const contentDisposition = response.headers.get('Content-Disposition');
       let filename = 'converted.md';
       if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        // Parse Content-Disposition header more robustly
+        // Handles: filename="file.md", filename=file.md, filename*=UTF-8''file.md
+        const filenameMatch = contentDisposition.match(/filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i);
         if (filenameMatch) {
-          filename = filenameMatch[1];
+          // Decode URI component if it was encoded
+          filename = decodeURIComponent(filenameMatch[1]);
         }
       }
 
