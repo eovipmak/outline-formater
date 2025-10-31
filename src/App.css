@@ -290,6 +290,18 @@ body {
   font-size: 0.9rem;
 }
 
+.App-footer a {
+  color: #73d0ff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.App-footer a:hover {
+  color: #a0e1ff;
+  text-decoration: underline;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .App-header h1 {

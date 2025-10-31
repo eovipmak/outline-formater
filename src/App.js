@@ -34,6 +34,8 @@ function App() {
       console.error('Error processing ZIP:', err);
     } finally {
       setLoading(false);
+      // Reset input value để cho phép upload lại file (kể cả file giống tên)
+      event.target.value = '';
     }
   };
 
@@ -150,7 +152,7 @@ function App() {
       </main>
 
       <footer className="App-footer">
-        <p>Built by <strong>tintn</strong> — powered by <a href="https://vinahost.vn" target="_blank">[Vinahost]</a></p>
+        <p>Built by <strong>tintn</strong> — powered by <a href="https://vinahost.vn" target="_blank" rel="noreferrer">[Vinahost]</a></p>
       </footer>
     </div>
   );
