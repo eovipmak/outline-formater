@@ -1,0 +1,337 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.App-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem 1rem;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.App-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* Main Content */
+.App-main {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Upload Section */
+.upload-section {
+  margin-bottom: 2rem;
+}
+
+.upload-label {
+  display: block;
+  cursor: pointer;
+}
+
+.upload-box {
+  border: 3px dashed #667eea;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  background-color: white;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.upload-box:hover {
+  border-color: #764ba2;
+  background-color: #f9f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.upload-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.upload-text strong {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.upload-text span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.file-input {
+  display: none;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading p {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Error Section */
+.error-section {
+  margin-bottom: 2rem;
+}
+
+.error-banner {
+  background-color: #fee;
+  border: 2px solid #fcc;
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: #c33;
+}
+
+.error-banner strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.error-banner pre {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-top: 0.5rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #c33;
+}
+
+/* Output Section */
+.output-section {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.output-header h2 {
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.download-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.download-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.download-button:active {
+  transform: translateY(0);
+}
+
+.markdown-output {
+  width: 100%;
+  min-height: 400px;
+  max-height: 600px;
+  padding: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  resize: vertical;
+  background-color: #fafafa;
+}
+
+.markdown-output:focus {
+  outline: none;
+  border-color: #667eea;
+  background-color: white;
+}
+
+.output-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f0f4ff;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+}
+
+.output-info p {
+  color: #555;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Instructions */
+.instructions {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.instructions h3 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.instructions ol {
+  text-align: left;
+  color: #555;
+  line-height: 2;
+  padding-left: 1.5rem;
+}
+
+.instructions li {
+  margin-bottom: 0.5rem;
+}
+
+.note {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #fffbea;
+  border-left: 4px solid #f59e0b;
+  border-radius: 4px;
+  color: #92400e;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.App-footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: auto;
+}
+
+.App-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.App-footer a {
+  color: #73d0ff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.App-footer a:hover {
+  color: #a0e1ff;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .App-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .upload-box {
+    padding: 2rem 1rem;
+  }
+  
+  .upload-icon {
+    font-size: 3rem;
+  }
+  
+  .output-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .download-button {
+    width: 100%;
+  }
+}
