@@ -1,31 +1,46 @@
 import { NextResponse } from 'next/server';
+import { processZip } from '@/lib/zipUtils';
 
 export async function POST(request) {
   try {
-    const body = await request.json();
-    const { markdown, filename } = body;
+    const formData = await request.formData();
+    const file = formData.get('file');
 
-    if (!markdown) {
+    if (!file) {
       return NextResponse.json(
-        { error: 'No markdown content provided' },
+        { error: 'No file uploaded' },
         { status: 400 }
       );
     }
 
-    // Create response with markdown content
-    const response = new NextResponse(markdown, {
+    // Validate file type
+    if (!file.name.endsWith('.zip')) {
+      return NextResponse.json(
+        { error: 'Please upload a .zip file' },
+        { status: 400 }
+      );
+    }
+
+    // Convert File to ArrayBuffer for processing
+    const arrayBuffer = await file.arrayBuffer();
+
+    // Process ZIP file using the utility function
+    const result = await processZip(arrayBuffer);
+
+    // Create response with markdown content as downloadable file
+    const response = new NextResponse(result.finalMarkdown, {
       status: 200,
       headers: {
         'Content-Type': 'text/markdown',
-        'Content-Disposition': `attachment; filename="${filename || 'output.md'}"`,
+        'Content-Disposition': `attachment; filename="${result.originalMarkdownName || 'converted.md'}"`,
       },
     });
 
     return response;
   } catch (error) {
-    console.error('Error creating download:', error);
+    console.error('Error processing ZIP:', error);
     return NextResponse.json(
-      { error: error.message || 'An error occurred while creating the download' },
+      { error: error.message || 'An error occurred while processing the file' },
       { status: 500 }
     );
   }

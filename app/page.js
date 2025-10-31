@@ -29,7 +29,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/convert', {
+      const response = await fetch('/api/download', {
         method: 'POST',
         body: formData,
       });
@@ -39,9 +39,21 @@ export default function Home() {
         throw new Error(errorData.error || 'Failed to process ZIP file');
       }
 
-      const result = await response.json();
-      setFinalMarkdown(result.markdown);
-      setOriginalFilename(result.filename);
+      // Read the markdown content from the response
+      const markdownContent = await response.text();
+      
+      // Extract filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'converted.md';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      setFinalMarkdown(markdownContent);
+      setOriginalFilename(filename);
     } catch (err) {
       setError(err.message || 'An error occurred while processing the file');
       console.error('Error processing ZIP:', err);
@@ -53,27 +65,12 @@ export default function Home() {
   };
 
   // Xử lý download file markdown
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!finalMarkdown) return;
 
     try {
-      const response = await fetch('/api/download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          markdown: finalMarkdown,
-          filename: originalFilename,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to download file');
-      }
-
-      // Create blob and trigger download
-      const blob = await response.blob();
+      // Create blob from markdown content
+      const blob = new Blob([finalMarkdown], { type: 'text/markdown' });
       const url = URL.createObjectURL(blob);
 
       // Tạo temporary anchor để trigger download
