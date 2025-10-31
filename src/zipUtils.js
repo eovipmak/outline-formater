@@ -92,22 +92,39 @@ function collectAttachments(zip) {
 /**
  * Tìm tất cả các tham chiếu ảnh trong Markdown
  * Hỗ trợ: ![alt](path), ![](path), và các reference style images
+ * Cũng hỗ trợ: ![alt](path "title =widthxheight") - Outline format với dimensions
  */
 function findImageReferences(markdown) {
   const references = [];
   
   // Pattern 1: ![alt](path) hoặc ![](path)
+  // Cũng match pattern với dimensions: ![alt](path " =widthxheight")
   const inlinePattern = /!\[([^\]]*)\]\(([^)]+)\)/g;
   let match;
   
   while ((match = inlinePattern.exec(markdown)) !== null) {
-    const path = match[2];
+    const fullPath = match[2];
+    let path = fullPath;
+    let dimensions = null;
+    
+    // Kiểm tra xem có dimensions không (format: " =widthxheight")
+    const dimensionMatch = fullPath.match(/^(.+?)\s+"?\s*=(\d+)x(\d+)"?$/);
+    if (dimensionMatch) {
+      path = dimensionMatch[1].trim();
+      dimensions = {
+        width: dimensionMatch[2],
+        height: dimensionMatch[3]
+      };
+    }
+    
     // Chỉ lấy các path trỏ đến attachments/
     if (path.includes('attachments/')) {
       references.push({
         fullMatch: match[0],
         alt: match[1],
         path: path,
+        fullPath: fullPath,
+        dimensions: dimensions,
         index: match.index
       });
     }
@@ -154,9 +171,15 @@ async function replaceImageUrls(markdown, attachments) {
           console.warn(`Large image detected: ${path} (${(fileSize / 1024 / 1024).toFixed(2)} MB)`);
         }
         
+        // Giữ nguyên dimensions nếu có
+        let newImageUrl = dataUri;
+        if (ref.dimensions) {
+          newImageUrl = `${dataUri} " =${ref.dimensions.width}x${ref.dimensions.height}"`;
+        }
+        
         replacements.push({
           oldText: ref.fullMatch,
-          newText: `![${ref.alt}](${dataUri})`
+          newText: `![${ref.alt}](${newImageUrl})`
         });
       } catch (error) {
         missingFiles.push(`${path} (error: ${error.message})`);

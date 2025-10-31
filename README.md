@@ -10,7 +10,8 @@
 🔒 **100% Private** - Everything runs in your browser, no server uploads  
 ⚡ **Fast & Simple** - Upload ZIP → Get Markdown with embedded images  
 ✏️ **Editable** - Review and modify output before downloading  
-🖼️ **Multi-Format** - Supports PNG, JPG, GIF, SVG, WebP, BMP, ICO
+🖼️ **Multi-Format** - Supports PNG, JPG, GIF, SVG, WebP, BMP, ICO  
+📏 **Dimension Support** - Preserves image dimensions from Outline exports (e.g., `" =856x502"`)
 
 ## 🚀 Quick Start
 
@@ -70,7 +71,30 @@ your-document.zip
 - All processing happens client-side
 - Large files may take longer to process
 
-## 📄 License
+## � Image Dimension Handling
+
+### Supported Formats
+The tool now handles Outline-exported images with dimension specifications:
+
+- **Standard format**: `![alt](path)`
+- **With dimensions**: `![alt](path " =widthxheight")`
+- **Various spacing**: `![](path "=widthxheight")`
+- **Empty alt text**: `![](path " =640x480")`
+
+### Example
+Outline exports like this:
+```markdown
+![](/api/attachments.redirect?id=acb3c249-a0ad-4511-a852-5c9408b585a3 " =856x502")
+```
+
+Are converted to:
+```markdown
+![](data:image/png;base64,iVBORw0KG... " =856x502")
+```
+
+**Dimensions are preserved** in the output, ensuring your images maintain the correct size.
+
+## �📄 License
 
 MIT License - see [LICENSE](LICENSE) file
 
