@@ -8,11 +8,11 @@
 ## ✨ Features
 
 🔒 **100% Private** - Processing happens on your server, files never leave your infrastructure  
-⚡ **Fast & Simple** - Upload ZIP → Get Markdown with embedded images  
+⚡ **Fast & Simple** - Single-step: Upload ZIP → Get Markdown with embedded images  
 ✏️ **Editable** - Review and modify output before downloading  
 🖼️ **Multi-Format** - Supports PNG, JPG, GIF, SVG, WebP, BMP, ICO  
 📏 **Dimension Support** - Preserves image dimensions from Outline exports (e.g., `" =856x502"`)  
-🚀 **Server-Side Processing** - Powered by Next.js API Routes for reliable ZIP handling
+🚀 **Optimized API** - One endpoint for upload and download in a single request
 
 ## 🚀 Quick Start
 
@@ -53,12 +53,11 @@ your-document.zip
 
 ## 🛠️ How It Works
 
-1. Upload ZIP via Next.js API Route (`/api/convert`)
+1. Upload ZIP via single API endpoint (`/api/download`)
 2. Extracts ZIP and locates `.md` file on server
 3. Collects all images from `attachments/`
 4. Converts images to base64 data URIs
-5. Returns processed markdown to client
-6. Download via `/api/download` endpoint
+5. Returns converted markdown file directly for download
 
 **Tech Stack:** Next.js 14 • React 18 • JSZip • App Router
 
@@ -70,29 +69,28 @@ your-document.zip
 - ❌ Missing referenced images
 - ⚠️ Large images (>5MB) warning
 
-## 🔌 API Endpoints
+## 🔌 API Endpoint
 
-### POST /api/convert
-Upload ZIP file and receive processed markdown.
+### POST /api/download
+Upload ZIP file and download converted markdown in a single request.
 
 **Request:**
 - Content-Type: multipart/form-data
-- Body: file (ZIP)
-
-**Response:**
-- Content-Type: application/json
-- Body: `{ markdown: string, filename: string }`
-
-### POST /api/download
-Download processed markdown file.
-
-**Request:**
-- Content-Type: application/json
-- Body: `{ markdown: string, filename: string }`
+- Body: file (ZIP containing .md and attachments/)
 
 **Response:**
 - Content-Type: text/markdown
-- Headers: Content-Disposition attachment
+- Content-Disposition: attachment; filename="converted.md"
+- Body: Converted markdown with embedded images
+
+**Example:**
+```bash
+curl -X POST http://localhost:3000/api/download \
+  -F "file=@outline-export.zip" \
+  -o converted.md
+```
+
+This single command uploads the ZIP and downloads the converted MD file immediately.
 
 ## 📝 Notes
 
