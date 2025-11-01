@@ -41,12 +41,20 @@ export async function POST(request) {
     // Process ZIP file using the utility function
     const result = await processZip(arrayBuffer);
 
+    // Encode filename cho Content-Disposition (RFC 5987)
+    // Hỗ trợ tên file tiếng Việt có dấu và khoảng trắng
+    const filename = result.originalMarkdownName || 'converted.md';
+    const encodedFilename = encodeURIComponent(filename)
+      .replace(/['()]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
+      .replace(/\*/g, '%2A');
+
     // Create response with markdown content as downloadable file
     const response = new NextResponse(result.finalMarkdown, {
       status: 200,
       headers: {
-        'Content-Type': 'text/markdown',
-        'Content-Disposition': `attachment; filename="${result.originalMarkdownName || 'converted.md'}"`,
+        'Content-Type': 'text/markdown; charset=utf-8',
+        // Sử dụng cả filename và filename* để hỗ trợ đa trình duyệt
+        'Content-Disposition': `attachment; filename="${filename.replace(/[^\x00-\x7F]/g, '_')}"; filename*=UTF-8''${encodedFilename}`,
       },
     });
 
