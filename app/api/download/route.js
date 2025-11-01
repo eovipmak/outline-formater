@@ -45,7 +45,7 @@ export async function POST(request) {
     // Hỗ trợ tên file tiếng Việt có dấu và khoảng trắng
     const filename = result.originalMarkdownName || 'converted.md';
     const encodedFilename = encodeURIComponent(filename)
-      .replace(/['()]/g, escape)
+      .replace(/['()]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
       .replace(/\*/g, '%2A');
 
     // Create response with markdown content as downloadable file
