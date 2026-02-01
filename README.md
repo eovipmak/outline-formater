@@ -12,7 +12,9 @@
 ✏️ **Editable** - Review and modify output before downloading  
 🖼️ **Multi-Format** - Supports PNG, JPG, GIF, SVG, WebP, BMP, ICO  
 📏 **Dimension Support** - Preserves image dimensions from Outline exports (e.g., `" =856x502"`)  
-🚀 **Optimized API** - One endpoint for upload and download in a single request
+🚀 **Optimized API** - One endpoint for upload and download in a single request  
+🇻🇳 **Vietnamese Filename** - Auto-generates Vietnamese slug filenames (e.g., `huong-dan-mau.md`)  
+🔍 **Flexible Image Search** - Finds images anywhere in the ZIP structure, not just in specific folders
 
 ## 🚀 Quick Start
 
@@ -39,25 +41,45 @@ Then open [http://localhost:3000](http://localhost:3000)
 3. **Review** the converted Markdown with embedded images
 4. **Download** your self-contained file
 
-## 📦 Expected ZIP Structure
+## 📦 ZIP Structure Support
+
+The app automatically finds and embeds images from **any folder structure** within the ZIP file. Common structures include:
 
 ```
 your-document.zip
 ├── document.md
 └── attachments/
     ├── image1.png
-    ├── image2.jpg
-    └── subfolder/
-        └── image3.gif
+    └── image2.jpg
 ```
+
+```
+your-document.zip
+├── document.md
+├── files/
+│   └── image1.png
+└── random-folder/
+    └── image2.jpg
+```
+
+```
+your-document.zip
+├── document.md
+├── image1.png  (same level as .md)
+└── subfolder/
+    └── image2.jpg
+```
+
+**Note:** The output filename will be automatically converted to Vietnamese slug format (e.g., `huong-dan-mau.md`).
 
 ## 🛠️ How It Works
 
 1. Upload ZIP via single API endpoint (`/api/download`)
 2. Extracts ZIP and locates `.md` file on server
-3. Collects all images from `attachments/`
+3. **Collects all images from any folder structure in the ZIP**
 4. Converts images to base64 data URIs
-5. Returns converted markdown file directly for download
+5. **Generates Vietnamese slug filename** (e.g., `huong-dan-mau.md`)
+6. Returns converted markdown file directly for download
 
 **Tech Stack:** Next.js 14 • React 18 • JSZip • App Router
 
@@ -80,7 +102,7 @@ Upload ZIP file and download converted markdown in a single request.
 
 **Response:**
 - Content-Type: text/markdown
-- Content-Disposition: attachment; filename="converted.md"
+- Content-Disposition: attachment; filename="huong-dan-mau.md" (Vietnamese slug format)
 - Body: Converted markdown with embedded images
 
 **Example:**
